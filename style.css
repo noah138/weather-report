@@ -1,0 +1,17 @@
+* {
+    box-sizing: border-box;
+}
+
+header {
+    background: linear-gradient(90deg, blue, purple);
+    padding: 1.8vh 0;
+    margin: 0.6vh;
+}
+
+h1 {
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    text-indent: 25%;
+    font-size: xx-large;
+}
