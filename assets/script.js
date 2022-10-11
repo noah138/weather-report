@@ -55,6 +55,6 @@ let weather = {
 };
 
 document.querySelector(".btn").addEventListener("click", function() {
-    preventDefault();
+    event.preventDefault();
     weather.search();
 });
