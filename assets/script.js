@@ -28,7 +28,6 @@ let weather = {
         var {name} = data;
         var {temp, humidity} = data.main;
         var {speed} = data.wind;
-        const {icon} = data.weather;
         
         var date = new Date(timezone * 1000);
         var month = date.getMonth();
@@ -53,57 +52,55 @@ let futureWeather = {
         fetch('https://api.openweathermap.org/data/2.5/forecast?q='
         + city + '&appid=' + apiKey + '&units=imperial'
         )
-        .then((response2) => response2.json())
-        .then((data2) => this.displayFutureWeather(data2));
+        .then((response) => response.json())
+        .then((data) => this.displayFutureWeather(data));
         
     },
-    displayFutureWeather: function(data2) {
-        for (i=1; 1 < 6; i++) {
-            var card = $("<div>").addClass("card");
-            var cardBody = $("<div>").addClass("card-body");
-            var cardTitle = $("<h5>").addClass("card-title");
-            var cardIcon = $("<img>").addClass("card-icon");
-            var cardTemp = $("<p>").addClass("card-text");
-            var cardWind = $("<p>").addClass("card-text");
-            var cardHumidity = $("<p>").addClass("card-text");
+    displayFutureWeather: function(data) {
+        for (i=4; i < data.list.length; i+=8) {
+            var {dt} = data.list[i];
+            var {temp, humidity} = data.list[i].main;
+            var {speed} = data.list[i].wind
+            const {id} = data.list[i].weather
+
+            const milliseconds = dt*1000
+            const dateObject = new Date(milliseconds)
+            const humanDateFormat = dateObject.toLocaleString()
+            const formattedDate = dateObject.toLocaleString("en-US", {timeZoneName: "short"})
             
-            var forecastDate = data2.daily[i].dt;
-            forecastDate = dayjs.unix(forecastDate).format('M/D/YYYY');
+            console.log(formattedDate, temp, humidity, speed, id)
 
-            var forecastIconUrl = "http://openweathermap.org/img/wn/" + data2.daily[i].weather[0].icon + ".png";
+            // var card = $("<div>").addClass("card");
+            // var cardBody = $("<div>").addClass("card-body");
+            // var cardTitle = $("<h5>").addClass("card-title");
+            // var cardIcon = $("<img>").addClass("card-icon");
+            // var cardTemp = $("<p>").addClass("card-text");
+            // var cardWind = $("<p>").addClass("card-text");
+            // var cardHumidity = $("<p>").addClass("card-text");
+
+            // var date = new Date(dt * 1000);
+            // var month = date.getMonth()+1;
+            // var day = date.getDate();
+            // var year = date.getFullYear();
+            // var formattedDate = (month+"/"+day+"/"+year);
+
+            // var forecastIconUrl = "http://openweathermap.org/img/wn/" + id + ".png";
+            
+            // card.append(cardBody);
+            // cardBody.append(cardTitle.text(formattedDate));
+            // cardBody.append(cardIcon.attr('src', forecastIconUrl));
+            // cardBody.append(cardTemp.text('Temp: ' + temp + ' °F'));
+            // cardBody.append(cardHumidity.text('Wind: ' + speed + ' %'));
+            // cardBody.append(cardWind.text('Humidity: ' + humidity + ' %'));
         }
+    },
+    search: function() {
+        this.fetchFutureWeather(document.querySelector(".input-search").value);
     }
-}
-// function futureWeather(city) {
-//         fetch('https://api.openweathermap.org/data/2.5/forecast?q='
-//         + city + '&appid=' + apiKey + '&units=imperial'
-//         )
-//         .then((response2) => response2.json())
-//         .then((data2) => this.displayfutureWeather(data2));
-
-//         const futureWeather = [];
-        
-//         for (let i = 0; i < 6; i ++) {
-//             futureWeather.push(data2.list[i]);
-//         }
-
-//         forecast.empty();
-
-//         futureWeather.forEach((day) => {
-//             const weatherCard = $('<div>').addClass('card col-md-2 bg-primary');
-//             weatherCard.html( 
-//                 '<div class="card-body p-md-0 p-sm-1 text-center">
-//                 <h5 class="card-title">${day.dt_txt.slice(0, 10)}</h5>
-//                 <img src="https://openweathermap.org/img/wn/${
-//                   day.weather[0].icon
-//                 }@2x.png"></img>
-//                 <p class="card-text">Temp: ${day.main.temp}℉</p>
-//                 <p class="card-text">Humidity: ${day.main.humidity}%</p>
-//               </div>');
-//         })
-//     }
+    }
 
 document.querySelector(".btn").addEventListener("click", function() {
     event.preventDefault();
     weather.search();
+    futureWeather.search();
 });
