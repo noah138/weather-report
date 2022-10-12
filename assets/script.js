@@ -16,8 +16,7 @@ $(document).ready(() => {
         const city = e.target.textContent;
         weather.fetchWeather(city);
         weather.displayWeather(city);
-        futureWeather.fetchFutureWeather(city);
-        futureWeather.displayFutureWeather(city);
+        getForecast(city);
     })
 })
 
@@ -34,13 +33,9 @@ $('.btn').on("click", (e) => {
     $('.list-group-item').on('click', (e) => {
         const city = e.target.textContent;
         weather.fetchWeather(city);
-        weather.displayWeather(city);
-        futureWeather.fetchFutureWeather(city);
-        futureWeather.displayFutureWeather(city);
     })
 
     weather.search();
-    futureWeather.search();
 })
 
 let weather = {
@@ -52,10 +47,11 @@ let weather = {
         .then((data) => this.displayWeather(data));
     },
     displayWeather: function(data) {
-        var {dt} = data;
-        var {name} = data;
-        const {temp, humidity} = data.main;
-        var {speed} = data.wind;
+        let dt = data.dt
+        let name = data.name
+        let humidity = data.main.humidity;
+        let speed = data.wind.speed;
+        let temp = data.main.temp;
         
         const dateObject = new Date(dt*1000);
         const formattedDate = dateObject.toLocaleDateString();
@@ -68,45 +64,54 @@ let weather = {
     },
     search: function() {
         this.fetchWeather(document.querySelector(".input-search").value);
+        getForecast();
     }
 };
 
-let futureWeather = {
-    fetchFutureWeather: function(city) {
-        fetch('https://api.openweathermap.org/data/2.5/forecast?q='
-        + city + '&appid=' + apiKey + '&units=imperial'
-        )
-        .then((response) => response.json())
-        .then((data) => this.displayFutureWeather(data));
-        
-    },
-    displayFutureWeather: function(data) {
-        for (let i=4; i < 37; i+=8) {
+function getForecast () {
+    let city = $('.input-search').val();
+    let queryURL = 'https://api.openweathermap.org/data/2.5/forecast?q='
+    + city + '&appid=' + apiKey + '&units=imperial'
 
-            var {dt} = data.list[i];
-            var {temp, humidity} = data.list[i].main;
-            var {speed} = data.list[i].wind;
+    fetch(queryURL)
+    .then ((response) => {
+        return response.json();
+    })
+    .then((response) => {
 
-            const dateObject = new Date(dt*1000);
-            const formattedDate = dateObject.toLocaleDateString();
+        let forecastHTML = `
+        <h3>5-Day Forecast:</h3>
+        <div id="fiveDayForecastUl">`;
+
+        for (i=0; i<response.list.length; i++) {
+            let dt = response.list[i].dt;
+            let dateObject = new Date(dt*1000);
+            let formattedDate = dateObject.toLocaleDateString();
             
-            console.log(formattedDate, temp, humidity, speed);
-
-            const forecastCard = forecast.addClass('card col-md-3');
-            
-            forecastCard.html(`
-                <div class = "card-body bg-secondary text-white">
-                <h4 class = "card-title">${formattedDate}</h4>
-                <img src = "https://openweathermap.org/img/wn/${data.list[i].weather[0].icon}.png"></img>
-                <p class = "card-text"> Temp: ${temp} °F</p>
-                <p class = "card-text"> Wind: ${speed} MPH</p>
-                <p class = "card-text"> Humidity: ${humidity} %</p>
-                </div>
-            `);
-            forecast.append(forecastCard);
+            let dayTimeUTC = response.list[i].dt;
+            let timeZoneOffset = response.city.timezone;
+            let timeZoneOffsetHours = timeZoneOffset / 60 / 60;
+            let thisMoment = moment.unix(dayTimeUTC).utc().utcOffset(timeZoneOffsetHours);
+            let iconURL = "https://openweathermap.org/img/w/" + response.list[i].weather[0].icon + ".png";
+    
+            if (thisMoment.format("HH:mm:ss") === "11:00:00" || thisMoment.format("HH:mm:ss") === "12:00:00" || thisMoment.format("HH:mm:ss") === "13:00:00") {
+                forecastHTML += `
+                <div class="card-body card col-2 p-2 text-center d-inline-flex justify-content-between">
+                    <ul class="list-unstyled p-1">
+                        <li>${formattedDate}</li>
+                        <li class="weather-icon"><img src="${iconURL}"></li>
+                        <li>Temp: ${response.list[i].main.temp} °F</li>
+                        <br>
+                        <li>Wind: ${response.list[i].wind.speed} MPH</li>
+                        <br>
+                        <li>Humidity: ${response.list[i].main.humidity}%</li>
+                    </ul>
+                </div>`;
+            }
         }
-    },
-    search: function() {
-        this.fetchFutureWeather(document.querySelector(".input-search").value);
-    }
+
+        forecastHTML += '</div>'
+
+        $('.forecast').html(forecastHTML);
+    })
 }
