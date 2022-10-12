@@ -2,6 +2,7 @@ let apiKey = '9360ff9c9f6d95d042d8df33057b529a'
 
 const forecast = $('.forecast')
 const searchHistory = $('#history')
+const clearHistory = $('#clear-btn')
 
 var cities = JSON.parse(localStorage.getItem('cities')) || [];
 
@@ -10,17 +11,23 @@ $(document).ready(() => {
         searchHistory.prepend(
             $(`<li class="list-group-item text-capitalize">${city}</li>`)
         )
+        
     })
 
     $('.list-group-item').on('click', (e) => {
         const city = e.target.textContent;
         weather.fetchWeather(city);
         weather.displayWeather(city);
-        getForecast(city);
+        getForecast();
     })
 })
 
-$('.btn').on("click", (e) => {
+clearHistory.on('click', function() {
+    localStorage.clear();
+    searchHistory.html("");
+});
+
+$('.search-btn').on("click", (e) => {
     event.preventDefault();
     
     var city = $('input').val();
@@ -96,7 +103,7 @@ function getForecast () {
     
             if (thisMoment.format("HH:mm:ss") === "11:00:00" || thisMoment.format("HH:mm:ss") === "12:00:00" || thisMoment.format("HH:mm:ss") === "13:00:00") {
                 forecastHTML += `
-                <div class="card-body card col-2 p-2 text-center">
+                <div class="card-body card col-2 p-2 text-center text-white bg-secondary">
                     <ul class="list-unstyled p-1">
                         <li>${formattedDate}</li>
                         <li class="weather-icon"><img src="${iconURL}"></li>
