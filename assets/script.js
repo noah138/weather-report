@@ -81,7 +81,7 @@ function getForecast () {
 
         let forecastHTML = `
         <h3>5-Day Forecast:</h3>
-        <div id="fiveDayForecastUl">`;
+        <div class="d-inline-flex flex-wrap justify-content-between">`;
 
         for (i=0; i<response.list.length; i++) {
             let dt = response.list[i].dt;
@@ -96,7 +96,7 @@ function getForecast () {
     
             if (thisMoment.format("HH:mm:ss") === "11:00:00" || thisMoment.format("HH:mm:ss") === "12:00:00" || thisMoment.format("HH:mm:ss") === "13:00:00") {
                 forecastHTML += `
-                <div class="card-body card col-2 p-2 text-center d-inline-flex justify-content-between">
+                <div class="card-body card col-2 p-2 text-center">
                     <ul class="list-unstyled p-1">
                         <li>${formattedDate}</li>
                         <li class="weather-icon"><img src="${iconURL}"></li>
