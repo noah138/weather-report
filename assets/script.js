@@ -27,6 +27,10 @@ clearHistory.on('click', function() {
     searchHistory.html("");
 });
 
+if (!localStorage.cities===null) {
+    hide
+}
+
 $('.search-btn').on("click", (e) => {
     event.preventDefault();
     
@@ -63,7 +67,7 @@ let weather = {
         const dateObject = new Date(dt*1000);
         const formattedDate = dateObject.toLocaleDateString();
 
-        document.querySelector('#city-name').innerText = name + " (" + formattedDate + ")"
+        document.querySelector('#city-name').innerText = name + "\n(" + formattedDate + ")"
         document.querySelector('#icon').src = "http://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png";
         document.querySelector('#city-temp').innerText = "Temp: " + temp + " °F"
         document.querySelector('#city-wind').innerText = "Wind: " + speed + " MPH"
@@ -103,7 +107,7 @@ function getForecast () {
     
             if (thisMoment.format("HH:mm:ss") === "11:00:00" || thisMoment.format("HH:mm:ss") === "12:00:00" || thisMoment.format("HH:mm:ss") === "13:00:00") {
                 forecastHTML += `
-                <div class="card-body card col-2 p-2 text-center text-white bg-secondary">
+                <div class="card-body card col-2 p-1 m-2 text-center text-white bg-secondary">
                     <ul class="list-unstyled p-1">
                         <li>${formattedDate}</li>
                         <li class="weather-icon"><img src="${iconURL}"></li>

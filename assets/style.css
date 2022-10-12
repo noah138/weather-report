@@ -14,10 +14,26 @@ h1 {
     color: white;
     font-weight: bold;
     text-align: center;
-    text-indent: 25%;
+    text-indent: 18%;
     font-size: xx-large;
 }
 
+#history {
+    text-transform: capitalize;
+}
 
+.main-card {
+    align-items: center;
+}
 
+#city-name {
+    font-weight: bold;
+}
 
+h3 {
+    text-align: center;
+}
+
+.forecast {
+    border: 0px;
+}
