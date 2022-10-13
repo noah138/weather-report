@@ -37,3 +37,11 @@ h3 {
 .forecast {
     border: 0px;
 }
+
+ul {
+    font-size: small;
+}
+
+#future-date {
+    font-size: medium;
+}
