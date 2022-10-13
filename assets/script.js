@@ -11,7 +11,8 @@ var cities = JSON.parse(localStorage.getItem('cities')) || [];
 // appends each searched city to the search history as a list item upon page load
 $(document).ready(() => {
     cities.forEach((city) => {
-        searchHistory.prepend($(`<li class="list-group-item text-capitalize">${city}</li>`))    
+        searchHistory.prepend(
+            $(`<li class="list-group-item text-capitalize">${city}</li>`))    
     })
 
 // runs the weather function if a list element frmo the search history is clicked on
@@ -44,6 +45,7 @@ $('.search-btn').on("click", (e) => {
     $('.list-group-item').on('click', (e) => {
         const city = e.target.textContent;
         weather.getWeather(city);
+        weather.getForecast(city);
     })
 
     weather.search();
@@ -70,11 +72,11 @@ let weather = {
         const dateObject = new Date(dt*1000);
         const formattedDate = dateObject.toLocaleDateString();
 
-        $('#city-name').innerText = name + "\n(" + formattedDate + ")"
-        $('#icon').src = "http://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png";
-        $('#city-temp').innerText = "Temp: " + temp + " °F"
-        $('#city-wind').innerText = "Wind: " + speed + " MPH"
-        $('#city-humidity').innerText = "Humidity: " + humidity + " %"
+        document.querySelector('#city-name').innerText = name + "\n(" + formattedDate + ")"
+        document.querySelector('#icon').src = "http://openweathermap.org/img/wn/" + data.weather[0].icon + "@2x.png";
+        document.querySelector('#city-temp').innerText = "Temp: " + temp + " °F"
+        document.querySelector('#city-wind').innerText = "Wind: " + speed + " MPH"
+        document.querySelector('#city-humidity').innerText = "Humidity: " + humidity + " %"
     },
     // repeats the same process above but for the five-day forecast
     getForecast: function (city) {
@@ -106,6 +108,7 @@ let weather = {
                 let icon = "https://openweathermap.org/img/w/" + response.list[i].weather[0].icon + ".png";
                 
                 // retrieves the weather from the next day only when it is mid day
+                // takes into account 11, 12, and 13 hours because the forecast API gives weather information every 3 hours
                 if (thisMoment.format("HH:mm:ss") === "11:00:00" || thisMoment.format("HH:mm:ss") === "12:00:00" || thisMoment.format("HH:mm:ss") === "13:00:00") {
                     forecastHTML += `
                     <div class="card-body card col-sm-1 col-md-2 m-1 text-center text-white bg-secondary">
